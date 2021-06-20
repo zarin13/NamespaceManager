@@ -5,7 +5,7 @@
  * @author Jeffrey Wang for MyWikis LLC
  */
 
-public class NamespaceManagerHooks {
+class NamespaceManagerHooks {
     public function onCanonicalNamespaces(array &$namespaces) {
         $data = loadNamespaceData();
 
