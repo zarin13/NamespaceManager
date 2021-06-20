@@ -36,8 +36,13 @@ class NamespaceManagerHooks {
         global $wgDBname, $wgNamespaceManagerDir;
 
         $wgNamespaceManagerDir = str_replace('$1', $wgDBname, $wgNamespaceManagerDir);
+
+        // Absolute vs. relative path
+        $filepath = substr($wgNamespaceManagerDir, 0, 1) === '/'
+            ? $wgNamespaceManagerDir
+            : __DIR__ . '/../'. $wgNamespaceManagerDir;
         
-        $fileContents = file_get_contents(__DIR__ . '/../' . $wgNamespaceManagerDir);
+        $fileContents = file_get_contents($filepath);
         if ($fileContents === false) {
             return false;
         }

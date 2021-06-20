@@ -24,7 +24,7 @@
     },
     "config": {
         "NamespaceManagerDir": {
-            "value": "data/namespaces_$1.json"
+            "value": "data/namespaces.json"
         }
     },
     "manifest_version": 2
