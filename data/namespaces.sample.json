@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Property",
+        "content": true
+    },
+    {
+        "name": "Human Resources",
+        "content": false
+    }
+]
