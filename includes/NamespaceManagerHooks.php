@@ -28,7 +28,9 @@ public class NamespaceManagerHooks {
      *         false if failure
     */
     private function loadNamespaceData() {
-        global $wgNamespaceManagerDir;
+        global $wgDBname, $wgNamespaceManagerDir;
+
+        $wgNamespaceManagerDir = str_replace('$1', $wgDBname, $wgNamespaceManagerDir);
         
         $fileContents = file_get_contents(__DIR__ . '/../' . $wgNamespaceManagerDir);
         if ($fileContents === false) {
