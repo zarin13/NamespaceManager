@@ -9,6 +9,11 @@ public class NamespaceManagerHooks {
     public function onCanonicalNamespaces(array &$namespaces) {
         $data = loadNamespaceData();
 
+        // If namespace defn file doesn't exist, skip silently rather than crashing MediaWiki
+        if ($data === false) {
+            return;
+        }
+
         $count = 3000;
         foreach ($data as $namespaceDefinition) {
             $namespaceName = $namespaceDefinition['name'];
