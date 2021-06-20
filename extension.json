@@ -20,7 +20,7 @@
         "CanonicalNamespaces": "NamespaceManagerHooks::onCanonicalNamespaces"
     },
     "AutoloadClasses": {
-        "NamespaceManagerHooks": "NamespaceManagerHooks.php"
+        "NamespaceManagerHooks": "includes/NamespaceManagerHooks.php"
     },
     "config": {
         "NamespaceManagerDir": {
