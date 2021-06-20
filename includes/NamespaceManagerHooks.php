@@ -6,8 +6,8 @@
  */
 
 class NamespaceManagerHooks {
-    public function onCanonicalNamespaces(array &$namespaces) {
-        $data = loadNamespaceData();
+    public static function onCanonicalNamespaces(array &$namespaces) {
+        $data = NamespaceManagerHooks::loadNamespaceData();
 
         // If namespace defn file doesn't exist, skip silently rather than crashing MediaWiki
         if ($data === false) {
@@ -32,7 +32,7 @@ class NamespaceManagerHooks {
      * @return associated_array if success
      *         false if failure
     */
-    private function loadNamespaceData() {
+    private static function loadNamespaceData() {
         global $wgDBname, $wgNamespaceManagerDir;
 
         $wgNamespaceManagerDir = str_replace('$1', $wgDBname, $wgNamespaceManagerDir);
