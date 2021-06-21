@@ -37,7 +37,7 @@ class NamespaceManagerHooks {
             if ($namespaceDefinition['content'] === true) {
                 $wgContentNamespaces[] = $count;
             }
-            
+
             // Is in search results by default
             $wgNamespacesToBeSearchedDefault[$count] = $namespaceDefinition['searchdefault'] ?? false;
             $wgNamespacesToBeSearchedDefault[$count + 1] = $namespaceDefinition['talksearchdefault'] ?? false;
@@ -58,7 +58,7 @@ class NamespaceManagerHooks {
             if ($namespaceDefinition['aliases'] !== null
                     && !empty($namespaceDefinition['aliases'])) {
                 foreach ($namespaceDefinition['aliases'] as $alias) {
-                    $alias = prepareNamespaceName($alias);
+                    $alias = NamespaceManager::prepareNamespaceName($alias);
                     $wgNamespaceAliases[$alias] = $count;
                 }
             }
@@ -66,7 +66,7 @@ class NamespaceManagerHooks {
             if ($namespaceDefinition['talkaliases'] !== null
                     && !empty($namespaceDefinition['talkaliases'])) {
                 foreach ($namespaceDefinition['talkaliases'] as $alias) {
-                    $alias = prepareNamespaceName($alias);
+                    $alias = NamespaceManager::prepareNamespaceName($alias);
                     $wgNamespaceAliases[$alias] = $count + 1;
                 }
             }
@@ -105,7 +105,7 @@ class NamespaceManagerHooks {
                 wfDebugLog('NamespaceManager', 'Invalid namespace definition.');
                 return;
             }
-            $namespaceName = prepareNamespaceName($namespaceName);
+            $namespaceName = NamespaceManager::prepareNamespaceName($namespaceName);
             $namespaces[$count++] = $namespaceName;
             $namespaces[$count++] = $namespaceName . '_talk';
         }
