@@ -1,6 +1,6 @@
 {
     "name": "NamespaceManager",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "author": [
             "[https://github.com/mywikis MyWikis LLC]"
     ],
@@ -17,9 +17,11 @@
         ]
     },
     "Hooks": {
-        "CanonicalNamespaces": "NamespaceManagerHooks::onCanonicalNamespaces"
+        "CanonicalNamespaces": "NamespaceManagerHooks::onCanonicalNamespaces",
+        "MediaWikiServices": "NamespaceManagerHooks::onMediaWikiServices"
     },
     "AutoloadClasses": {
+        "NamespaceManager": "includes/NamespaceManager.php",
         "NamespaceManagerHooks": "includes/NamespaceManagerHooks.php"
     },
     "config": {

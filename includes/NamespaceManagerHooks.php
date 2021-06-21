@@ -6,8 +6,92 @@
  */
 
 class NamespaceManagerHooks {
+    /**
+     * Sets up namespace configuration options
+     * In MediaWiki, the configuration must be done _before_ the namespaces themselves are actually
+     * initialized, believe it or not.
+     * i.e. This is called before the CanonicalNamespaces hook is called.
+     */
+    private static function onMediaWikiServices(array &$services) {
+        global $wgCapitalLinkOverrides,
+            $wgCapitalLinks,
+            $wgContentNamespaces,
+            // $wgExtraSignatureNamespaces,
+            // $wgNamespaceContentModels,
+            $wgNamespaceAliases,
+            $wgNamespaceProtection,
+            $wgNamespacesWithSubpages,
+            $wgNamespacesToBeSearchedDefault,
+            $wgNonincludableNamespaces;
+        
+        $data = NamespaceManager::loadNamespaceData();
+        
+        if ($data === false) {
+            return;
+        }
+
+        $count = 3000;
+        // Using JSON configuration, set MediaWiki config variables
+        foreach ($data as $namespaceDefinition) {
+            // Is content namespace
+            if ($namespaceDefinition['content'] === true) {
+                $wgContentNamespaces[] = $count;
+            }
+            
+            // Is in search results by default
+            $wgNamespacesToBeSearchedDefault[$count] = $namespaceDefinition['searchdefault'] ?? false;
+            $wgNamespacesToBeSearchedDefault[$count + 1] = $namespaceDefinition['talksearchdefault'] ?? false;
+
+            // Supports subpages
+            $wgNamespacesWithSubpages[$count] = $namespaceDefinition['subpages'] ?? false;
+            $wgNamespacesWithSubpages[$count + 1] = $namespaceDefinition['talksubpages'] ?? false;
+
+            // Is includable
+            if ($namespaceDefinition['includable'] === false) {
+                $wgNonincludableNamespaces[] = $count;
+            }
+            if ($namespaceDefinition['talkincludable'] === false) {
+                $wgNonincludableNamespaces[] = $count + 1;
+            }
+
+            // Aliases for non-talk
+            if ($namespaceDefinition['aliases'] !== null
+                    && !empty($namespaceDefinition['aliases'])) {
+                foreach ($namespaceDefinition['aliases'] as $alias) {
+                    $alias = prepareNamespaceName($alias);
+                    $wgNamespaceAliases[$alias] = $count;
+                }
+            }
+            // Aliases for talk
+            if ($namespaceDefinition['talkaliases'] !== null
+                    && !empty($namespaceDefinition['talkaliases'])) {
+                foreach ($namespaceDefinition['talkaliases'] as $alias) {
+                    $alias = prepareNamespaceName($alias);
+                    $wgNamespaceAliases[$alias] = $count + 1;
+                }
+            }
+
+            // Edit permissions for non-talk
+            if ($namespaceDefinition['editpermissions'] !== null
+                    && !empty($namespaceDefinition['editpermissions'])) {
+                $wgNamespaceProtection[$count] = $namespaceDefinition['editpermissions'] ?? [];
+            }
+            // Edit permissions for talk
+            if ($namespaceDefinition['talkeditpermissions'] !== null
+                    && !empty($namespaceDefinition['talkeditpermissions'])) {
+                $wgNamespaceProtection[$count + 1] = $namespaceDefinition['talkeditpermissions']
+                        ?? [];
+            }
+
+            $count++;
+        }
+    }
+
+    /**
+     * Adds the namespaces themselves
+     */
     public static function onCanonicalNamespaces(array &$namespaces) {
-        $data = NamespaceManagerHooks::loadNamespaceData();
+        $data = NamespaceManager::loadNamespaceData();
 
         // If namespace defn file doesn't exist, skip silently rather than crashing MediaWiki
         if ($data === false) {
@@ -21,32 +105,9 @@ class NamespaceManagerHooks {
                 wfDebugLog('NamespaceManager', 'Invalid namespace definition.');
                 return;
             }
-            str_replace(' ', '_', $namespaceName);
+            $namespaceName = prepareNamespaceName($namespaceName);
             $namespaces[$count++] = $namespaceName;
             $namespaces[$count++] = $namespaceName . '_talk';
         }
-    }
-
-    /**
-     * Retrieves JSON files
-     * @return associated_array if success
-     *         false if failure
-    */
-    private static function loadNamespaceData() {
-        global $wgDBname, $wgNamespaceManagerDir;
-
-        $wgNamespaceManagerDir = str_replace('$1', $wgDBname, $wgNamespaceManagerDir);
-
-        // Absolute vs. relative path
-        $filepath = substr($wgNamespaceManagerDir, 0, 1) === '/'
-            ? $wgNamespaceManagerDir
-            : __DIR__ . '/../'. $wgNamespaceManagerDir;
-        
-        $fileContents = file_get_contents($filepath);
-        if ($fileContents === false) {
-            return false;
-        }
-        $data = json_decode($fileContents, true);
-        return $data ?? false;
     }
 }
