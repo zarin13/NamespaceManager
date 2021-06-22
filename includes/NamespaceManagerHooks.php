@@ -12,7 +12,7 @@ class NamespaceManagerHooks {
      * initialized, believe it or not.
      * i.e. This is called before the CanonicalNamespaces hook is called.
      */
-    public static function onMediaWikiServices(MediaWikiServices &$services) {
+    public static function onMediaWikiServices(&$services) {
         global $wgCapitalLinkOverrides,
             $wgCapitalLinks,
             $wgContentNamespaces,
