@@ -59,7 +59,7 @@ class NamespaceManager {
     public static function saveNamespaceDataRaw($fileContents) {
         global $wgDBname, $wgNamespaceManagerDataPath;
 
-        if (!verifyIsJson($fileContents)) {
+        if (!NamespaceManager::verifyIsJson($fileContents)) {
             return false;
         }
 
