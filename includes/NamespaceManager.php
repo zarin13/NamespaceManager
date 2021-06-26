@@ -12,6 +12,17 @@ class NamespaceManager {
      *         false if failure
     */
     public static function loadNamespaceData() {
+        $fileContents = NamespaceManager::loadNamespaceDataRaw();
+        $data = json_decode($fileContents, true);
+        return $data ?? false;
+    }
+
+    /**
+     * Retrieves JSON files
+     * @return string with JSON file contents if success
+     *         false if failure
+    */
+    public static function loadNamespaceDataRaw() {
         global $wgDBname, $wgNamespaceManagerDataPath;
 
         $wgNamespaceManagerDataPath = str_replace('$1', $wgDBname, $wgNamespaceManagerDataPath);
@@ -25,8 +36,7 @@ class NamespaceManager {
         if ($fileContents === false) {
             return false;
         }
-        $data = json_decode($fileContents, true);
-        return $data ?? false;
+        return $fileContents;
     }
 
     /**

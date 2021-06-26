@@ -27,25 +27,39 @@ class SpecialManageNamespaces extends SpecialPage {
 		$out->setPageTitle( $this->msg( 'managenamespaces-title' ) );
 		$out->addWikiMsg( 'managenamespaces-intro' );
 
-		$namespaceJsonTextArea = new OOUI\MultilineTextInputWidget([
-            'rows' => 60,
-            'value' => NamespaceManager::loadNamespaceData()
-        ]);
-
-        $submitBtn = new OOUI\ButtonInputWidget([
-            'type' => 'submit'
-        ]);
-
-        $out->addHTML( <<<EOD
-            <form action="Special:ManageNamespaces" method="post">
-                $namespaceJsonTextArea
-                $submitBtn
-            </form>
-EOD
-// The preceding line should remain unindented, otherwise the code will break.
-        );
-
-		$out->addHTML( "<p>$btn1</p><p>$btn2</p><p>$btn3</p>" );
+        $out->addHTML(new OOUI\FormLayout([
+            'method' => 'POST',
+            'action' => 'Special:ManageNamespaces',
+            'items' => [
+                new OOUI\FieldsetLayout([
+                    'label' => 'Namespaces',
+                    'items' => [
+                        new OOUI\FieldLayout(
+                            new OOUI\MultilineTextInputWidget([
+                                'rows' => 60,
+                                'value' => NamespaceManager::loadNamespaceDataRaw()
+                            ]),
+                            [
+                                'label' => 'Namespaces JSON file'
+                            ]
+                        ),
+                        new OOUI\FieldLayout(
+                            new OOUI\ButtonInputWidget([
+                                'name' => 'save',
+                                'label' => 'Save JSON',
+                                'type' => 'submit',
+                                'flags' => ['primary', 'progressive'],
+                                'icon' => 'check',
+                            ]),
+                            [
+                                'label' => null,
+                                'align' => 'top',
+                            ]
+                        ),
+                    ]
+                ])
+            ]
+        ]));
 	}
 
 	protected function getGroupName() {
