@@ -40,7 +40,8 @@ class SpecialManageNamespaces extends SpecialPage {
                                 'value' => NamespaceManager::loadNamespaceDataRaw()
                             ]),
                             [
-                                'label' => 'Namespaces JSON file'
+                                'label' => 'Namespaces JSON file',
+                                'align' => 'top',
                             ]
                         ),
                         new OOUI\FieldLayout(
