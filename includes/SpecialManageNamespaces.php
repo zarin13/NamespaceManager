@@ -28,6 +28,8 @@ class SpecialManageNamespaces extends SpecialPage {
         $request = $this->getRequest();
         $namespaceJsonContents = $request->getText('namespaceJsonContents');
 
+        $textWidgetContents = NamespaceManager::loadNamespaceDataRaw();
+
         if (!empty($namespaceJsonContents)) {
             $status = NamespaceManager::saveNamespaceDataRaw($namespaceJsonContents);
             if ($status === false) {
@@ -36,6 +38,7 @@ class SpecialManageNamespaces extends SpecialPage {
                     'label' => 'The file could not be saved. Check if your syntax is correct.',
                 ]));
             } else {
+                $textWidgetContents = $namespaceJsonContents;
                 $out->addHTML(new OOUI\MessageWidget([
                     'type' => 'success',
                     'label' => 'JSON configuration file updated.',
@@ -54,7 +57,7 @@ class SpecialManageNamespaces extends SpecialPage {
                             new OOUI\MultilineTextInputWidget([
                                 'rows' => 60,
                                 'name' => 'namespaceJsonContents',
-                                'value' => NamespaceManager::loadNamespaceDataRaw()
+                                'value' => $textWidgetContents
                             ]),
                             [
                                 'label' => 'JSON file contents',
