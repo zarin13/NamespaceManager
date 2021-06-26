@@ -31,7 +31,7 @@
         }
     },
     "SpecialPages": {
-        "ManageNamespaces": "SpecialManageNamespaces",
+        "ManageNamespaces": "SpecialManageNamespaces"
     },
     "GroupPermissions": {
         "sysop": {
