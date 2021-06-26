@@ -26,11 +26,10 @@ class SpecialManageNamespaces extends SpecialPage {
 		$out->addWikiMsg( 'managenamespaces-intro' );
 
         $request = $this->getRequest();
-        $namespaceJsonContents = $request->getText('namespaceJsonContents');
-
-        $textWidgetContents = NamespaceManager::loadNamespaceDataRaw();
+        $namespaceJsonContents = $request->getText('namespaceJsonContents');        
 
         if (!empty($namespaceJsonContents)) {
+            $textWidgetContents = $namespaceJsonContents;
             $status = NamespaceManager::saveNamespaceDataRaw($namespaceJsonContents);
             if ($status === false) {
                 $out->addHTML(new OOUI\MessageWidget([
@@ -38,12 +37,13 @@ class SpecialManageNamespaces extends SpecialPage {
                     'label' => 'The file could not be saved. Check if your syntax is correct.',
                 ]));
             } else {
-                $textWidgetContents = $namespaceJsonContents;
                 $out->addHTML(new OOUI\MessageWidget([
                     'type' => 'success',
                     'label' => 'JSON configuration file updated.',
                 ]));
             }
+        } else {
+            $textWidgetContents = NamespaceManager::loadNamespaceDataRaw();
         }
 
         $out->addHTML(new OOUI\FormLayout([
