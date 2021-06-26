@@ -12,14 +12,14 @@ class NamespaceManager {
      *         false if failure
     */
     public static function loadNamespaceData() {
-        global $wgDBname, $wgNamespaceManagerDir;
+        global $wgDBname, $wgNamespaceManagerDataPath;
 
-        $wgNamespaceManagerDir = str_replace('$1', $wgDBname, $wgNamespaceManagerDir);
+        $wgNamespaceManagerDataPath = str_replace('$1', $wgDBname, $wgNamespaceManagerDataPath);
 
         // Absolute vs. relative path
-        $filepath = substr($wgNamespaceManagerDir, 0, 1) === '/'
-            ? $wgNamespaceManagerDir
-            : __DIR__ . '/../'. $wgNamespaceManagerDir;
+        $filepath = substr($wgNamespaceManagerDataPath, 0, 1) === '/'
+            ? $wgNamespaceManagerDataPath
+            : __DIR__ . '/../'. $wgNamespaceManagerDataPath;
         
         $fileContents = file_get_contents($filepath);
         if ($fileContents === false) {

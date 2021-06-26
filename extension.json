@@ -1,6 +1,6 @@
 {
     "name": "NamespaceManager",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "author": [
             "[https://github.com/mywikis MyWikis LLC]"
     ],
@@ -25,7 +25,7 @@
         "NamespaceManagerHooks": "includes/NamespaceManagerHooks.php"
     },
     "config": {
-        "NamespaceManagerDir": {
+        "NamespaceManagerDataPath": {
             "value": "data/namespaces.json"
         }
     },

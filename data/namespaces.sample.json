@@ -1,5 +1,6 @@
 [
     {
+        "id": 3000,
         "name": "Property",
         "content": true,
         "searchdefault": true,
@@ -14,7 +15,9 @@
         "talkeditpermissions": ["propertymanagers"]
     },
     {
+        "id": 3002,
         "name": "Human Resources",
+        "talkname": "Human Resources discussion",
         "content": false,
         "searchdefault": true,
         "talksearchdefault": false,

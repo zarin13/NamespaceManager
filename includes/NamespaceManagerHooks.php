@@ -30,60 +30,57 @@ class NamespaceManagerHooks {
             return;
         }
 
-        $count = 3000;
         // Using JSON configuration, set MediaWiki config variables
         foreach ($data as $namespaceDefinition) {
+            if (isset($namespaceDefinition['id'])) {
+                $id = $namespaceDefinition['id'];
+            } else {
+                wfDebugLog('NamespaceManager', 'Invalid namespace number, cannot proceed.');
+            }
             // Is content namespace
             if ($namespaceDefinition['content'] === true) {
-                $wgContentNamespaces[] = $count;
+                $wgContentNamespaces[] = $id;
             }
 
             // Is in search results by default
-            $wgNamespacesToBeSearchedDefault[$count] = $namespaceDefinition['searchdefault'] ?? false;
-            $wgNamespacesToBeSearchedDefault[$count + 1] = $namespaceDefinition['talksearchdefault'] ?? false;
+            $wgNamespacesToBeSearchedDefault[$id] = $namespaceDefinition['searchdefault'] ?? false;
+            $wgNamespacesToBeSearchedDefault[$id + 1] = $namespaceDefinition['talksearchdefault'] ?? false;
 
             // Supports subpages
-            $wgNamespacesWithSubpages[$count] = $namespaceDefinition['subpages'] ?? false;
-            $wgNamespacesWithSubpages[$count + 1] = $namespaceDefinition['talksubpages'] ?? false;
+            $wgNamespacesWithSubpages[$id] = $namespaceDefinition['subpages'] ?? false;
+            $wgNamespacesWithSubpages[$id + 1] = $namespaceDefinition['talksubpages'] ?? false;
 
             // Is includable
-            if ($namespaceDefinition['includable'] === false) {
-                $wgNonincludableNamespaces[] = $count;
+            if (isset($namespaceDefinition['includable']) && $namespaceDefinition['includable'] === false) {
+                $wgNonincludableNamespaces[] = $id;
             }
-            if ($namespaceDefinition['talkincludable'] === false) {
-                $wgNonincludableNamespaces[] = $count + 1;
+            if (isset($namespaceDefinition['talkincludable']) && $namespaceDefinition['talkincludable'] === false) {
+                $wgNonincludableNamespaces[] = $id + 1;
             }
 
             // Aliases for non-talk
-            if ($namespaceDefinition['aliases'] !== null
-                    && !empty($namespaceDefinition['aliases'])) {
+            if (isset($namespaceDefinition['aliases']) && !empty($namespaceDefinition['aliases'])) {
                 foreach ($namespaceDefinition['aliases'] as $alias) {
                     $alias = NamespaceManager::prepareNamespaceName($alias);
-                    $wgNamespaceAliases[$alias] = $count;
+                    $wgNamespaceAliases[$alias] = $id;
                 }
             }
             // Aliases for talk
-            if ($namespaceDefinition['talkaliases'] !== null
-                    && !empty($namespaceDefinition['talkaliases'])) {
+            if (isset($namespaceDefinition['talkaliases']) && !empty($namespaceDefinition['talkaliases'])) {
                 foreach ($namespaceDefinition['talkaliases'] as $alias) {
                     $alias = NamespaceManager::prepareNamespaceName($alias);
-                    $wgNamespaceAliases[$alias] = $count + 1;
+                    $wgNamespaceAliases[$alias] = $id + 1;
                 }
             }
 
             // Edit permissions for non-talk
-            if ($namespaceDefinition['editpermissions'] !== null
-                    && !empty($namespaceDefinition['editpermissions'])) {
-                $wgNamespaceProtection[$count] = $namespaceDefinition['editpermissions'] ?? [];
+            if (isset($namespaceDefinition['editpermissions']) && !empty($namespaceDefinition['editpermissions'])) {
+                $wgNamespaceProtection[$id] = $namespaceDefinition['editpermissions'] ?? [];
             }
             // Edit permissions for talk
-            if ($namespaceDefinition['talkeditpermissions'] !== null
-                    && !empty($namespaceDefinition['talkeditpermissions'])) {
-                $wgNamespaceProtection[$count + 1] = $namespaceDefinition['talkeditpermissions']
-                        ?? [];
+            if (isset($namespaceDefinition['talkeditpermissions']) && !empty($namespaceDefinition['talkeditpermissions'])) {
+                $wgNamespaceProtection[$id + 1] = $namespaceDefinition['talkeditpermissions'] ?? [];
             }
-
-            $count++;
         }
     }
 
@@ -98,16 +95,34 @@ class NamespaceManagerHooks {
             return;
         }
 
-        $count = 3000;
         foreach ($data as $namespaceDefinition) {
-            $namespaceName = $namespaceDefinition['name'];
-            if ($namespaceName === null) {
-                wfDebugLog('NamespaceManager', 'Invalid namespace definition.');
+            if (isset($namespaceDefinition['id'])) {
+                $id = $namespaceDefinition['id'];
+            } else {
+                // This will probably never run unless onMediaWikiServices somehow
+                // runs after onCanonicalNamespaces in the future
+                wfDebugLog('NamespaceManager', 'Invalid namespace number. Cannot proceed.');
+                return;
+            }
+            if ($id % 2 != 0) {
+                wfDebugLog('NamespaceManager', 'Non-talk namespace must be even. Cannot proceed.');
+                return;
+            }
+            if ($id < 3000 || $id > 4999) {
+                wfDebugLog('NamespaceManager', 'Cannot assign a custom namespace with an ID outside of the range 3000-4999, inclusive. Cannot proceed.');
+                return;
+            }
+            if (isset($namespaceDefinition['name'])) {
+                $namespaceName = $namespaceDefinition['name'];
+            } else {
+                wfDebugLog('NamespaceManager', 'Invalid namespace name definition. Cannot proceed.');
                 return;
             }
             $namespaceName = NamespaceManager::prepareNamespaceName($namespaceName);
-            $namespaces[$count++] = $namespaceName;
-            $namespaces[$count++] = $namespaceName . '_talk';
+            $namespaces[$id] = $namespaceName;
+            $namespaces[$id + 1] = isset($namespaceDefinition['talkname'])
+                                    ? $namespaceDefinition['talkname']
+                                    : $namespaceName . '_talk';
         }
     }
 }
