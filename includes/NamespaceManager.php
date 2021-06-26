@@ -72,7 +72,7 @@ class NamespaceManager {
         
         $status = file_put_contents($filepath, $fileContents);
 
-        return $status === false;
+        return $status !== false;
     }
 
     public static function verifyIsJson($candidateStr) {

@@ -26,19 +26,19 @@ class SpecialManageNamespaces extends SpecialPage {
 		$out->addWikiMsg( 'managenamespaces-intro' );
 
         $request = $this->getRequest();
-        $namespaceJsonContents = $request->getText( 'namespaceJsonContents' );
+        $namespaceJsonContents = $request->getText('namespaceJsonContents');
 
         if (!empty($namespaceJsonContents)) {
             $status = NamespaceManager::saveNamespaceDataRaw($namespaceJsonContents);
             if ($status === false) {
                 $out->addHTML(new OOUI\MessageWidget([
                     'type' => 'error',
-                    'text' => 'The file could not be saved. Check if your syntax is correct.',
+                    'label' => 'The file could not be saved. Check if your syntax is correct.',
                 ]));
             } else {
                 $out->addHTML(new OOUI\MessageWidget([
                     'type' => 'success',
-                    'text' => 'JSON configuration file updated.',
+                    'label' => 'JSON configuration file updated.',
                 ]));
             }
         }
