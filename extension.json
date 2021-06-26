@@ -29,5 +29,10 @@
             "value": "data/namespaces.json"
         }
     },
+    "GroupPermissions": {
+        "sysop": {
+            "managenamespaces": true
+        }
+    },
     "manifest_version": 2
 }
