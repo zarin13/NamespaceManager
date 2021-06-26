@@ -21,26 +21,43 @@ class SpecialManageNamespaces extends SpecialPage {
 		$this->checkPermissions();
 		
 		$out = $this->getOutput();
-
 		$out->enableOOUI();
-
 		$out->setPageTitle( $this->msg( 'managenamespaces-title' ) );
 		$out->addWikiMsg( 'managenamespaces-intro' );
+
+        $request = $this->getRequest();
+        $namespaceJsonContents = $request->getText( 'namespaceJsonContents' );
+
+        if (!empty($namespaceJsonContents)) {
+            $status = NamespaceManager::saveNamespaceDataRaw($namespaceJsonContents);
+            if ($status === false) {
+                $out->addHTML(new OOUI\MessageWidget([
+                    'type' => 'error',
+                    'text' => 'The file could not be saved. Check if your syntax is correct.',
+                ]));
+            } else {
+                $out->addHTML(new OOUI\MessageWidget([
+                    'type' => 'success',
+                    'text' => 'JSON configuration file updated.',
+                ]));
+            }
+        }
 
         $out->addHTML(new OOUI\FormLayout([
             'method' => 'POST',
             'action' => 'Special:ManageNamespaces',
             'items' => [
                 new OOUI\FieldsetLayout([
-                    'label' => 'Namespaces',
+                    'label' => 'Namespaces definition',
                     'items' => [
                         new OOUI\FieldLayout(
                             new OOUI\MultilineTextInputWidget([
                                 'rows' => 60,
+                                'name' => 'namespaceJsonContents',
                                 'value' => NamespaceManager::loadNamespaceDataRaw()
                             ]),
                             [
-                                'label' => 'Namespaces JSON file',
+                                'label' => 'JSON file contents',
                                 'align' => 'top',
                             ]
                         ),

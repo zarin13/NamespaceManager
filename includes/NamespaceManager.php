@@ -7,7 +7,7 @@
 
 class NamespaceManager {
     /**
-     * Retrieves JSON files
+     * Retrieves JSON files and returns JSON array
      * @return associated_array if success
      *         false if failure
     */
@@ -18,7 +18,7 @@ class NamespaceManager {
     }
 
     /**
-     * Retrieves JSON files
+     * Retrieves JSON files and returns file contents as string
      * @return string with JSON file contents if success
      *         false if failure
     */
@@ -37,6 +37,48 @@ class NamespaceManager {
             return false;
         }
         return $fileContents;
+    }
+
+    /**
+     * Attempts to save array or object into JSON file
+     * @return boolean true if succeeded, false if failed
+     */
+    public static function saveNamespaceData($data) {
+        $fileContents = json_encode($data);
+        if ($fileContents === false) {
+            return false;
+        }
+        $status = NamespaceManager::saveNamespaceDataRaw($fileContents);
+        return $status;
+    }
+
+    /**
+     * Attempts to save string into JSON file
+     * @return boolean true if succeeded, false if failed
+     */
+    public static function saveNamespaceDataRaw($fileContents) {
+        global $wgDBname, $wgNamespaceManagerDataPath;
+
+        if (!verifyIsJson($fileContents)) {
+            return false;
+        }
+
+        $wgNamespaceManagerDataPath = str_replace('$1', $wgDBname, $wgNamespaceManagerDataPath);
+
+        // Absolute vs. relative path
+        $filepath = substr($wgNamespaceManagerDataPath, 0, 1) === '/'
+            ? $wgNamespaceManagerDataPath
+            : __DIR__ . '/../'. $wgNamespaceManagerDataPath;
+        
+        $status = file_put_contents($filepath, $fileContents);
+
+        return $status === false;
+    }
+
+    public static function verifyIsJson($candidateStr) {
+        $result = json_decode($candidateStr);
+
+        return $result !== null;
     }
 
     /**
